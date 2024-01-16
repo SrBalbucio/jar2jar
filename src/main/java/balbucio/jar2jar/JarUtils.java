@@ -1,49 +1,23 @@
 package balbucio.jar2jar;
 
-import balbucio.pacqit.model.Manifest;
-import com.sun.source.doctree.SeeTree;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
+import java.util.jar.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class JarUtils {
 
-    public static List<String> getJars(File folder) {
-        List<String> jars = new ArrayList<>();
-        for (File j : folder.listFiles()) {
-            if (j.isFile() && FilenameUtils.isExtension(j.getName(), "jar")) {
-                jars.add(j.getAbsolutePath());
-            }
-        }
-        return jars;
-    }
-
-    public static List<File> getJarFiles(File folder) {
-        List<File> jars = new ArrayList<>();
-        for (File j : folder.listFiles()) {
-            if (j.isFile() && FilenameUtils.isExtension(j.getName(), "jar")) {
-                jars.add(j);
-            }
-        }
-        return jars;
-    }
 
     public static void directoryToJar(File jarFile, Manifest manifest, File... directory) throws Exception {
 
         JarOutputStream jarOutputStream;
 
         if(manifest != null){
-            jarOutputStream = new JarOutputStream(new FileOutputStream(jarFile), manifest.getRealManifest());
+            jarOutputStream = new JarOutputStream(new FileOutputStream(jarFile), manifest);
         } else{
             jarOutputStream = new JarOutputStream(new FileOutputStream(jarFile));
         }
