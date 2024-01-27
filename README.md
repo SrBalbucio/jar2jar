@@ -1,8 +1,12 @@
 # JAR2JAR
-Esta ferramenta uni dois JAR em um só.
+Ferramenta para manipulação de JAR
 
-## Como usar
+## Como unir dois JAR em um só:
 Execute o seguinte comando:
-```js
-java -jar jar2jar.jar --jar=<firstjar> --jar2=<secondjar> --out=<jarOut> --target=<pathDecompile>
+```powershell
+java -jar jar2jar.jar --jar=<firstjar> --jar2=<secondjar> --out=<jarOut> --target=<pathDecompile> --manifest=<manifest> --mode=unir
+```
+## Como remover um package do JAR:
+```powershell
+java -jar jar2jar.jar --jar=<firstjar> --out=<jarOut> --target=<pathDecompile> --manifest=<manifest> --ignorepackage=<package,package> --mode=remover
 ```
