@@ -12,7 +12,7 @@ import java.util.zip.ZipOutputStream;
 public class JarUtils {
 
 
-    public static void directoryToJar(File jarFile, Manifest manifest, File... directory) throws Exception {
+    public static void directoryToJar(File jarFile, Manifest manifest, List<String> ignorePackages,  File... directory) throws Exception {
 
         JarOutputStream jarOutputStream;
 
@@ -24,12 +24,13 @@ public class JarUtils {
 
         Set<String> addedPath = new HashSet<>();
 
+
         for(File dir : directory) {
             if(dir != null) {
                 if(dir.listFiles() != null && dir.listFiles().length != 0) {
                     for (File file : dir.listFiles()) {
                         if (file != null) {
-                            addFilesToJar(file, "", jarOutputStream, addedPath);
+                            addFilesToJar(file, "", jarOutputStream, addedPath, ignorePackages);
                         }
                     }
                 }
@@ -39,9 +40,14 @@ public class JarUtils {
         jarOutputStream.close();
     }
 
-    private static void addFilesToJar(File source, String parentPath, JarOutputStream jarOutputStream, Set<String> files) throws Exception {
+    private static void addFilesToJar(File source, String parentPath, JarOutputStream jarOutputStream, Set<String> files, List<String> ignorePackages) throws Exception {
         byte[] buffer = new byte[1024];
         String entryName = parentPath + source.getName();
+
+        if(ignorePackages.contains(entryName)){
+            return;
+        }
+
 
         if (source.isDirectory()) {
             if (!entryName.isEmpty()) {
@@ -51,7 +57,7 @@ public class JarUtils {
 
                 if(files.contains(entryName)){
                     for (File file : source.listFiles()) {
-                        addFilesToJar(file, entryName, jarOutputStream, files);
+                        addFilesToJar(file, entryName, jarOutputStream, files, ignorePackages);
                     }
                     return;
                 }
@@ -62,7 +68,7 @@ public class JarUtils {
                 jarOutputStream.closeEntry();
             }
             for (File file : source.listFiles()) {
-                addFilesToJar(file, entryName, jarOutputStream, files);
+                addFilesToJar(file, entryName, jarOutputStream, files, ignorePackages);
             }
         } else {
             if(files.contains(entryName)){
@@ -93,7 +99,7 @@ public class JarUtils {
             for (JarEntry entry : jarFile.stream().toArray(JarEntry[]::new)) {
                 if (!entry.isDirectory()) {
                     String entryName = entry.getName();
-                    if(!entryName.contains("META-INF") || !entryName.contains("MANIFEST.MF")) {
+                    if(!entryName.contains("MANIFEST.MF")) {
                         File outFile = new File(destDir, entryName);
                         File parent = outFile.getParentFile();
                         if (!parent.exists()) {
